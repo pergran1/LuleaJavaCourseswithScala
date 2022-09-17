@@ -10,13 +10,27 @@ object Account extends  App{
     //Increase by 1
     val accountNumber = newUniqueNumber()
 
-    def deposit(amount: Int) = balance += amount
+    def deposit(amount: Int): Boolean = {
+      if(amount > 0){
+        balance += amount
+        return true
+      }
+      false
+      }
 
-    def withdraw(amount: Int) = balance -= amount
+    def withdraw(amount: Int): Boolean = {
+      if (amount > 0 && balance >= amount){
+        balance -= amount
+        return true
+      }
+      false
+      }
 
     override def toString: String = s"$accountNumber $balance $accountType $interest"
 
   }
+
+
 
   object Account{
     // get unique for each account
@@ -39,6 +53,14 @@ object Account extends  App{
       if(newName.isEmpty == false) name = newName
       if (newSurName.isEmpty == false) surName = newSurName
 
+    }
+
+    def findAccount(accNumber: Int): Account ={
+      val foundAccount = accountList.find(_.accountNumber == accNumber)
+      foundAccount match {
+        case Some(x) => x
+        case None => null
+      }
     }
 
     override def toString: String = s"$pNo $name $surName"
@@ -90,11 +112,65 @@ object Account extends  App{
       false
     }
 
+    def createSavingsAccount(pNo: String): Int = {
+      val foundCustomer: Customer = findCustomer(pNo)
+      if (foundCustomer != null) {
+        val  accountNumber = foundCustomer.createAccount()
+        return accountNumber
+      }
+      -1
+    }
+
+    def getAccount(pNo: String, accountNumber: Int): String = {
+      val foundCustomer: Customer = findCustomer(pNo)
+      if (foundCustomer != null){
+        val foundAccount: Account = foundCustomer.findAccount(accountNumber)
+        if (foundAccount != null){
+          return foundAccount.toString
+        } else {null}
+
+      }else {null}
+    }
+
+    def deposit(pNo: String, accountNumber: Int, amount: Int): Boolean = {
+      val foundAccount: Account = findAccount(pNo, accountNumber)
+      if (foundAccount != null){
+        return foundAccount.deposit(amount)
+      }
+      false
+
+    }
+
+    def withdraw(pNo: String, accountNumber: Int, amount: Int): Boolean = {
+      val foundAccount: Account = findAccount(pNo, accountNumber)
+      if(foundAccount != null){
+        return foundAccount.withdraw(amount)
+      }
+      false
+    }
+
+    // get the account from a customer
+    def findAccount(pNo: String, accountNumber: Int): Account ={
+      val customer = findCustomer(pNo)
+      if (customer != null){
+        val account: Option[Account] = customer.accountList.find(_.accountNumber == accountNumber)
+        return account match {
+          case Some(x) => x
+          case None => null
+        }
+      }
+      null
+    }
+
     def findCustomer(pNo: String): Customer = {
       // Controls if the customer exist
-      val result = customerList.filter(_.pNo == pNo)
-      println(s"resutet är $result")
-      if(result.size == 1) result.apply(0) else null
+      //val result = customerList.filter(_.pNo == pNo)
+      val result: Option[Customer] = customerList.find(_.pNo == pNo)
+      // find results in a option and I need to pick that option out
+      result match {
+        case Some(x) => x
+        case None => null
+      }
     }
   }
 
@@ -126,11 +202,18 @@ object Account extends  App{
   bank.createCustomer("Pelle4", "Svensson", "943")
   println(bank.findCustomer("943"))
   println(bank.createCustomer("Nils", "Svensson", "932"))
+  println(bank.createCustomer("Nils", "Svensson", "922"))
   println(s"Customerlistan är: ${bank.customerList}")
-  println(bank.getAllCustomers())
+
   println(bank.getCustomer("943"))
+  bank.createSavingsAccount("943")
+  println(bank.createSavingsAccount("943"))
   println(bank.changeCustomerName("PelleNew", "", "943"))
+  println(bank.deposit("943", 1006, 150 ))
   println(bank.getCustomer("943"))
+  println(bank.getAllCustomers())
+  println(bank.withdraw("943", 1006, 30 ))
+  println(bank.getAccount("943", 1006))
 
 
 

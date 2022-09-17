@@ -29,7 +29,7 @@ object FirstTask_PrintTable extends  App{
 
   def round_to_double(value: Double, nbr_of_decimals: Int): Double =  {
     val scale: Double = Math.pow(10, nbr_of_decimals)
-    Math.round(value * scale.round) / scale
+    Math.round(value * scale) / scale
   }
 
 
