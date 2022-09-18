@@ -33,7 +33,7 @@ object Account extends  App{
 
 
   object Account{
-    // get unique for each account
+    // get unique id for each account
     private var lastNumber = 1001
     def newUniqueNumber() = {lastNumber += 1; lastNumber}
   }
@@ -54,6 +54,19 @@ object Account extends  App{
       if (newSurName.isEmpty == false) surName = newSurName
 
     }
+
+    def removeAccount(accNumber: Int): String = {
+      val foundAcc = findAccount(accNumber)
+      if (foundAcc != null){
+        // first update the account list so the removed acc is not here
+        // Then return the acc to string
+        accountList = accountList.filter(_.accountNumber != accNumber)
+        return foundAcc.toString
+      }
+      null
+    }
+
+    def resetAccountList() = accountList = List()
 
     def findAccount(accNumber: Int): Account ={
       val foundAccount = accountList.find(_.accountNumber == accNumber)
@@ -149,6 +162,33 @@ object Account extends  App{
       false
     }
 
+    def closeAccount(pNo: String, accontNbr: Int): String = {
+      val foundCustomer = findCustomer(pNo)
+      // get the list accountlist of the customer
+      if (foundCustomer != null ){
+        return foundCustomer.removeAccount(accontNbr)
+      }
+      null
+    }
+
+    def deleteCustomer(pNo: String): List[String] = {
+      val foundCustomer = findCustomer(pNo)
+      if ( foundCustomer != null) {
+        var deleteListInfo: List[String] = List()
+        deleteListInfo = deleteListInfo :+ foundCustomer.toString
+        println(s"foundCustimer ör  ${foundCustomer.toString}")
+        println(s"Delete info är nu $deleteListInfo")
+        deleteListInfo = deleteListInfo ::: foundCustomer.accountList.map(_.toString) //add account info to list
+        println(s"Delete 2 info är nu $deleteListInfo")
+        foundCustomer.resetAccountList() //delete all accounts
+        // create a new customerList where the customer is not ibn
+        customerList = customerList.filter(_.pNo != pNo)
+        return deleteListInfo
+
+      }
+      null
+    }
+
     // get the account from a customer
     def findAccount(pNo: String, accountNumber: Int): Account ={
       val customer = findCustomer(pNo)
@@ -214,6 +254,11 @@ object Account extends  App{
   println(bank.getAllCustomers())
   println(bank.withdraw("943", 1006, 30 ))
   println(bank.getAccount("943", 1006))
+  println(s"Dags att stänga detta konto ${bank.closeAccount("943", 1007)}")
+  println(bank.getCustomer("943"))
+  println(bank.deleteCustomer("943"))
+  println(bank.getCustomer("943"))
+  println(bank.getAllCustomers())
 
 
 
