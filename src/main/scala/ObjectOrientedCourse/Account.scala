@@ -176,7 +176,7 @@ object Account extends  App{
       if ( foundCustomer != null) {
         var deleteListInfo: List[String] = List()
         deleteListInfo = deleteListInfo :+ foundCustomer.toString
-        println(s"foundCustimer ör  ${foundCustomer.toString}")
+        println(s"Found customer and it is:  ${foundCustomer.toString}")
         println(s"Delete info är nu $deleteListInfo")
         deleteListInfo = deleteListInfo ::: foundCustomer.accountList.map(_.toString) //add account info to list
         println(s"Delete 2 info är nu $deleteListInfo")
